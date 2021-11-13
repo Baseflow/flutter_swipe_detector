@@ -1,6 +1,6 @@
 name: flutter_swipe_detector
 description: A package to detect your swipe directions and provides you with callbacks to handle them.
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/Baseflow/flutter_swipe_detector
 documentation: https://github.com/Baseflow/flutter_swipe_detector
 
