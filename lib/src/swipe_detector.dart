@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// A widget that detects swipes.
+/// Detects user swipes.
 ///
 /// Attempts to recognize swipes that correspond to its non-null callbacks.
 ///
@@ -38,6 +38,55 @@ import 'package:flutter/material.dart';
 ///
 ///  * [GestureDetector], a widget that is used to detect gestures.
 class SwipeDetector extends StatefulWidget {
+  /// Creates a [SwipeDetector] which can be used to detects user swipes.
+  ///
+  /// behavior: How this gesture detector should behave during hit testing.
+  ///
+  /// onSwipe: Called when the user has swiped in a particular direction.
+  ///
+  /// onSwipeUp: Called when the user has swiped upwards.
+  ///
+  /// onSwipeDown: Called when the user has swiped downwards.
+  ///
+  /// onSwipeLeft: Called when the user has swiped left.
+  ///
+  /// onSwipeRight: Called when the user has swiped right.
+  ///
+  /// Attempts to recognize swipes that correspond to its non-null callbacks.
+  /// Usage example:
+  /// ```dart
+  /// Widget build(BuildContext context) {
+  ///   return Scaffold(
+  ///     body: SwipeDetector(
+  ///       onSwipe: (direction) {
+  ///         setState(() {
+  ///           _swipeHistory.insert(0, direction);
+  ///           if (_swipeHistory.length > _swipeHistoryLimit) {
+  ///             _swipeHistory.removeLast();
+  ///           }
+  ///         });
+  ///       },
+  ///       child: Container(
+  ///         color: Colors.yellow.shade600,
+  ///         padding: const EdgeInsets.all(16),
+  ///         child: const Text(
+  ///           'Swipe me!',
+  ///         ),
+  ///       ),
+  ///     ),
+  ///   );
+  /// }
+  /// ```
+  /// {@end-tool}
+  ///
+  /// ## Debugging
+  ///
+  /// To see how large the hit test box of a [SwipeDetector] is for debugging
+  /// purposes, set [debugPaintPointersEnabled] to true.
+  ///
+  /// See also:
+  ///
+  ///  * [GestureDetector], a widget that is used to detect gestures.
   const SwipeDetector({
     Key? key,
     this.behavior,
@@ -153,8 +202,15 @@ class _SwipeDetectorState extends State<SwipeDetector> {
 
 /// The direction in which the user swiped.
 enum SwipeDirection {
+  /// Swipe up.
   up,
+
+  /// Swipe down.
   down,
+
+  /// Swipe left.
   left,
+
+  /// Swipe right.
   right,
 }
