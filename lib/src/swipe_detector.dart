@@ -95,6 +95,7 @@ class SwipeDetector extends StatefulWidget {
     this.onSwipeDown,
     this.onSwipeLeft,
     this.onSwipeRight,
+    this.updatable = false,
     required this.child,
   }) : super(key: key);
 
@@ -113,16 +114,22 @@ class SwipeDetector extends StatefulWidget {
   final void Function(SwipeDirection direction)? onSwipe;
 
   /// Called when the user has swiped upwards.
-  final VoidCallback? onSwipeUp;
+  final void Function(double yAxis)? onSwipeUp;
 
   /// Called when the user has swiped downwards.
-  final VoidCallback? onSwipeDown;
+  final void Function(double yAxis)? onSwipeDown;
 
   /// Called when the user has swiped to the left.
-  final VoidCallback? onSwipeLeft;
+  final void Function(double xAxis)? onSwipeLeft;
 
   /// Called when the user has swiped to the right.
-  final VoidCallback? onSwipeRight;
+  final void Function(double xAxis)? onSwipeRight;
+
+  /// If true, the callbacks are called every time the gesture gets updated
+  /// and provide an axis value in each callback.
+  ///
+  /// Otherwise, callbacks are called only when the gesture is ended.
+  final bool updatable;
 
   @override
   _SwipeDetectorState createState() => _SwipeDetectorState();
@@ -143,40 +150,38 @@ class _SwipeDetectorState extends State<SwipeDetector> {
       },
       onPanUpdate: (details) {
         _updatePosition = details.globalPosition;
+        if (widget.updatable) {
+          _calculateAndExecute();
+        }
       },
       onPanEnd: (details) {
-        final delta = _updatePosition - _startPosition;
-        final direction = _getSwipeDirection(delta);
-        _executeCallbacks(direction);
+        _calculateAndExecute();
       },
       child: widget.child,
     );
   }
 
-  void _executeCallbacks(SwipeDirection direction) {
-    if (widget.onSwipe != null) {
-      widget.onSwipe!(direction);
-    }
+  void _calculateAndExecute() {
+    final delta = _updatePosition - _startPosition;
+    final direction = _getSwipeDirection(delta);
+    _executeCallbacks(direction, _updatePosition);
+  }
+
+  void _executeCallbacks(SwipeDirection direction, Offset offset) {
+    widget.onSwipe?.call(direction);
+
     switch (direction) {
       case SwipeDirection.up:
-        if (widget.onSwipeUp != null) {
-          widget.onSwipeUp!();
-        }
+        widget.onSwipeUp?.call(offset.dy);
         break;
       case SwipeDirection.down:
-        if (widget.onSwipeDown != null) {
-          widget.onSwipeDown!();
-        }
+        widget.onSwipeDown?.call(offset.dy);
         break;
       case SwipeDirection.left:
-        if (widget.onSwipeLeft != null) {
-          widget.onSwipeLeft!();
-        }
+        widget.onSwipeLeft?.call(offset.dx);
         break;
       case SwipeDirection.right:
-        if (widget.onSwipeRight != null) {
-          widget.onSwipeRight!();
-        }
+        widget.onSwipeRight?.call(offset.dx);
         break;
     }
   }

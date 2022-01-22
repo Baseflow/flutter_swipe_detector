@@ -39,9 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<SwipeDirection> _swipeHistory = [];
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Demo Home Page'),
@@ -54,16 +52,16 @@ class _MyHomePageState extends State<MyHomePage> {
               // onSwipe: (direction) {
               //   _addSwipe(direction);
               // },
-              onSwipeUp: () {
+              onSwipeUp: (yAxis) {
                 _addSwipe(SwipeDirection.up);
               },
-              onSwipeDown: () {
+              onSwipeDown: (yAxis) {
                 _addSwipe(SwipeDirection.down);
               },
-              onSwipeLeft: () {
+              onSwipeLeft: (xAxis) {
                 _addSwipe(SwipeDirection.left);
               },
-              onSwipeRight: () {
+              onSwipeRight: (xAxis) {
                 _addSwipe(SwipeDirection.right);
               },
               child: Container(
@@ -83,18 +81,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    ..._swipeHistory
-                        .map<Widget>(
-                          (direction) => Padding(
-                            padding: const EdgeInsets.only(
-                              top: 8,
-                            ),
-                            child: Text(
-                              describeEnum(direction),
-                            ),
-                          ),
-                        )
-                        .toList(),
+                    for (final direction in _swipeHistory)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(describeEnum(direction)),
+                      ),
                   ],
                 ),
               ),
@@ -105,9 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _addSwipe(
-    SwipeDirection direction,
-  ) {
+  void _addSwipe(SwipeDirection direction) {
     setState(() {
       _swipeHistory.insert(0, direction);
       if (_swipeHistory.length > _swipeHistoryLimit) {
