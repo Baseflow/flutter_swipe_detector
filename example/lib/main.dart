@@ -39,7 +39,9 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<SwipeDirection> _swipeHistory = [];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Demo Home Page'),
@@ -96,7 +98,9 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _addSwipe(SwipeDirection direction) {
+  void _addSwipe(
+    SwipeDirection direction,
+  ) {
     setState(() {
       _swipeHistory.insert(0, direction);
       if (_swipeHistory.length > _swipeHistoryLimit) {

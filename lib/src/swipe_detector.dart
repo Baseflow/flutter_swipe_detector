@@ -52,6 +52,10 @@ class SwipeDetector extends StatefulWidget {
   ///
   /// onSwipeRight: Called when the user has swiped right.
   ///
+  /// liveFeedback: If true, the callbacks are called every time the gesture
+  /// gets updated and provide an axis value in each callback.
+  /// Otherwise, callbacks are called only when the gesture is ended.
+  ///
   /// Attempts to recognize swipes that correspond to its non-null callbacks.
   /// Usage example:
   /// ```dart
@@ -95,7 +99,7 @@ class SwipeDetector extends StatefulWidget {
     this.onSwipeDown,
     this.onSwipeLeft,
     this.onSwipeRight,
-    this.updatable = false,
+    this.liveFeedback = false,
     required this.child,
   }) : super(key: key);
 
@@ -129,7 +133,7 @@ class SwipeDetector extends StatefulWidget {
   /// and provide an axis value in each callback.
   ///
   /// Otherwise, callbacks are called only when the gesture is ended.
-  final bool updatable;
+  final bool liveFeedback;
 
   @override
   _SwipeDetectorState createState() => _SwipeDetectorState();
@@ -150,7 +154,7 @@ class _SwipeDetectorState extends State<SwipeDetector> {
       },
       onPanUpdate: (details) {
         _updatePosition = details.globalPosition;
-        if (widget.updatable) {
+        if (widget.liveFeedback) {
           _calculateAndExecute();
         }
       },
@@ -167,7 +171,10 @@ class _SwipeDetectorState extends State<SwipeDetector> {
     _executeCallbacks(direction, _updatePosition);
   }
 
-  void _executeCallbacks(SwipeDirection direction, Offset offset) {
+  void _executeCallbacks(
+    SwipeDirection direction,
+    Offset offset,
+  ) {
     widget.onSwipe?.call(direction);
 
     switch (direction) {
