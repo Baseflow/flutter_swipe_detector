@@ -52,6 +52,10 @@ class SwipeDetector extends StatefulWidget {
   ///
   /// onSwipeRight: Called when the user has swiped right.
   ///
+  /// liveFeedback: If true, the callbacks are called every time the gesture
+  /// gets updated and provide an [Offset] value in each callback.
+  /// Otherwise, callbacks are called only when the gesture is ended.
+  ///
   /// Attempts to recognize swipes that correspond to its non-null callbacks.
   /// Usage example:
   /// ```dart
@@ -95,6 +99,7 @@ class SwipeDetector extends StatefulWidget {
     this.onSwipeDown,
     this.onSwipeLeft,
     this.onSwipeRight,
+    this.liveFeedback = false,
     required this.child,
   }) : super(key: key);
 
@@ -110,19 +115,36 @@ class SwipeDetector extends StatefulWidget {
   final Widget child;
 
   /// Called when the user has swiped in a particular direction.
-  final void Function(SwipeDirection direction)? onSwipe;
+  ///
+  /// - The [direction] parameter is the [SwipeDirection] of the swipe.
+  /// - The [offset] parameter is the offset of the swipe in the [direction].
+  final void Function(SwipeDirection direction, Offset offset)? onSwipe;
 
   /// Called when the user has swiped upwards.
-  final VoidCallback? onSwipeUp;
+  ///
+  /// - The [offset] parameter is the offset of the swipe since it started.
+  final void Function(Offset offset)? onSwipeUp;
 
   /// Called when the user has swiped downwards.
-  final VoidCallback? onSwipeDown;
+  ///
+  /// - The [offset] parameter is the offset of the swipe since it started.
+  final void Function(Offset offset)? onSwipeDown;
 
   /// Called when the user has swiped to the left.
-  final VoidCallback? onSwipeLeft;
+  ///
+  /// - The [offset] parameter is the offset of the swipe since it started.
+  final void Function(Offset offset)? onSwipeLeft;
 
   /// Called when the user has swiped to the right.
-  final VoidCallback? onSwipeRight;
+  ///
+  /// - The [offset] parameter is the offset of the swipe since it started.
+  final void Function(Offset offset)? onSwipeRight;
+
+  /// If true, the callbacks are called every time the gesture gets updated
+  /// and provide an [Offset] value in each callback.
+  ///
+  /// Otherwise, callbacks are called only when the gesture is ended.
+  final bool liveFeedback;
 
   @override
   _SwipeDetectorState createState() => _SwipeDetectorState();
@@ -143,55 +165,53 @@ class _SwipeDetectorState extends State<SwipeDetector> {
       },
       onPanUpdate: (details) {
         _updatePosition = details.globalPosition;
+        if (widget.liveFeedback) {
+          _calculateAndExecute();
+        }
       },
       onPanEnd: (details) {
-        final delta = _updatePosition - _startPosition;
-        final direction = _getSwipeDirection(delta);
-        _executeCallbacks(direction);
+        _calculateAndExecute();
       },
       child: widget.child,
     );
   }
 
-  void _executeCallbacks(SwipeDirection direction) {
-    if (widget.onSwipe != null) {
-      widget.onSwipe!(direction);
-    }
+  void _calculateAndExecute() {
+    final offset = _updatePosition - _startPosition;
+    final direction = _getSwipeDirection(offset);
+
+    widget.onSwipe?.call(
+      direction,
+      offset,
+    );
+
     switch (direction) {
       case SwipeDirection.up:
-        if (widget.onSwipeUp != null) {
-          widget.onSwipeUp!();
-        }
+        widget.onSwipeUp?.call(offset);
         break;
       case SwipeDirection.down:
-        if (widget.onSwipeDown != null) {
-          widget.onSwipeDown!();
-        }
+        widget.onSwipeDown?.call(offset);
         break;
       case SwipeDirection.left:
-        if (widget.onSwipeLeft != null) {
-          widget.onSwipeLeft!();
-        }
+        widget.onSwipeLeft?.call(offset);
         break;
       case SwipeDirection.right:
-        if (widget.onSwipeRight != null) {
-          widget.onSwipeRight!();
-        }
+        widget.onSwipeRight?.call(offset);
         break;
     }
   }
 
   SwipeDirection _getSwipeDirection(
-    Offset delta,
+    Offset offset,
   ) {
-    if (delta.dx.abs() > delta.dy.abs()) {
-      if (delta.dx > 0) {
+    if (offset.dx.abs() > offset.dy.abs()) {
+      if (offset.dx > 0) {
         return SwipeDirection.right;
       } else {
         return SwipeDirection.left;
       }
     } else {
-      if (delta.dy > 0) {
+      if (offset.dy > 0) {
         return SwipeDirection.down;
       } else {
         return SwipeDirection.up;

@@ -51,19 +51,19 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             SwipeDetector(
-              // onSwipe: (direction) {
+              // onSwipe: (direction, offset) {
               //   _addSwipe(direction);
               // },
-              onSwipeUp: () {
+              onSwipeUp: (offset) {
                 _addSwipe(SwipeDirection.up);
               },
-              onSwipeDown: () {
+              onSwipeDown: (offset) {
                 _addSwipe(SwipeDirection.down);
               },
-              onSwipeLeft: () {
+              onSwipeLeft: (offset) {
                 _addSwipe(SwipeDirection.left);
               },
-              onSwipeRight: () {
+              onSwipeRight: (offset) {
                 _addSwipe(SwipeDirection.right);
               },
               child: Container(
@@ -83,18 +83,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    ..._swipeHistory
-                        .map<Widget>(
-                          (direction) => Padding(
-                            padding: const EdgeInsets.only(
-                              top: 8,
-                            ),
-                            child: Text(
-                              describeEnum(direction),
-                            ),
-                          ),
-                        )
-                        .toList(),
+                    for (final direction in _swipeHistory)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(describeEnum(direction)),
+                      ),
                   ],
                 ),
               ),
