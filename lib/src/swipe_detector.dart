@@ -162,6 +162,7 @@ class _SwipeDetectorState extends State<SwipeDetector> {
       behavior: widget.behavior,
       onPanStart: (details) {
         _startPosition = details.globalPosition;
+        _updatePosition = details.globalPosition;
       },
       onPanUpdate: (details) {
         _updatePosition = details.globalPosition;
