@@ -151,8 +151,8 @@ class SwipeDetector extends StatefulWidget {
 }
 
 class _SwipeDetectorState extends State<SwipeDetector> {
-  late Offset _startPosition;
-  late Offset _updatePosition;
+  Offset? _startPosition;
+  Offset? _updatePosition;
 
   @override
   Widget build(
@@ -177,27 +177,29 @@ class _SwipeDetectorState extends State<SwipeDetector> {
   }
 
   void _calculateAndExecute() {
-    final offset = _updatePosition - _startPosition;
-    final direction = _getSwipeDirection(offset);
+    if (_updatePosition != null && _startPosition != null) {
+      final offset = _updatePosition! - _startPosition!;
+      final direction = _getSwipeDirection(offset);
 
-    widget.onSwipe?.call(
-      direction,
-      offset,
-    );
+      widget.onSwipe?.call(
+        direction,
+        offset,
+      );
 
-    switch (direction) {
-      case SwipeDirection.up:
-        widget.onSwipeUp?.call(offset);
-        break;
-      case SwipeDirection.down:
-        widget.onSwipeDown?.call(offset);
-        break;
-      case SwipeDirection.left:
-        widget.onSwipeLeft?.call(offset);
-        break;
-      case SwipeDirection.right:
-        widget.onSwipeRight?.call(offset);
-        break;
+      switch (direction) {
+        case SwipeDirection.up:
+          widget.onSwipeUp?.call(offset);
+          break;
+        case SwipeDirection.down:
+          widget.onSwipeDown?.call(offset);
+          break;
+        case SwipeDirection.left:
+          widget.onSwipeLeft?.call(offset);
+          break;
+        case SwipeDirection.right:
+          widget.onSwipeRight?.call(offset);
+          break;
+      }
     }
   }
 
