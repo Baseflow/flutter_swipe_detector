@@ -162,6 +162,7 @@ class _SwipeDetectorState extends State<SwipeDetector> {
       behavior: widget.behavior,
       onPanStart: (details) {
         _startPosition = details.globalPosition;
+        _updatePosition = details.globalPosition; // for clicks
       },
       onPanUpdate: (details) {
         _updatePosition = details.globalPosition;
@@ -180,11 +181,14 @@ class _SwipeDetectorState extends State<SwipeDetector> {
     final offset = _updatePosition - _startPosition;
     final direction = _getSwipeDirection(offset);
 
-    widget.onSwipe?.call(
-      direction,
-      offset,
-    );
-
+    final d = offset.distanceSquared;
+    final c = (offset.dx / offset.dy).abs();
+    if (d > 1000 && (c > 1.2 || c < 0.8)) {
+      widget.onSwipe?.call(
+        direction,
+        offset,
+      );
+    }
     switch (direction) {
       case SwipeDirection.up:
         widget.onSwipeUp?.call(offset);
